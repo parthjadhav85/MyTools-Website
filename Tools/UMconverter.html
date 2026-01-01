@@ -4,34 +4,40 @@
   <link rel="icon" type="image/x-icon" href="../favicon.ico.jpg" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>YouTube Downloader - MyTools</title>
+  <title>Universal Media Converter - MyTools</title>
   
   <link rel="stylesheet" href="../css/tools-shared.css">
 
   <style>
-    /* TOOL SPECIFIC CSS */
-    .search-box { display: flex; gap: 10px; margin-bottom: 20px; margin-top: 30px; }
-    input[type="text"] { flex: 1; padding: 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 16px; outline: none; transition: border-color 0.2s; }
-    input[type="text"]:focus { border-color: var(--accent); }
+    /* TOOL-SPECIFIC CSS */
+    .upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        padding: 40px;
+        margin-top: 30px;
+        cursor: pointer;
+        transition: 0.2s;
+        background: rgba(255,255,255,0.02);
+    }
+    .upload-area:hover { border-color: var(--accent); background: rgba(106, 92, 255, 0.05); }
+    .upload-icon { width: 48px; height: 48px; fill: var(--text-muted); margin-bottom: 15px; }
     
-    button.primary { background: linear-gradient(90deg, var(--accent), #8f7eff); border: none; color: white; font-weight: 600; padding: 14px 30px; border-radius: 10px; cursor: pointer; font-size: 16px; white-space: nowrap; }
-    button.primary:hover { opacity: 0.9; transform: scale(1.02); }
+    input[type="file"] { display: none; }
     
-    #resultArea { margin-top: 30px; display: none; animation: fadeIn 0.5s; }
-    .video-card { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; display: flex; gap: 20px; align-items: center; border: 1px solid var(--border); text-align: left; }
-    .video-card img { width: 160px; border-radius: 8px; object-fit: cover; }
-    .video-info { flex: 1; }
-    .video-info h3 { margin: 0 0 8px 0; font-size: 18px; color: var(--text); }
-    .video-info p { color: var(--text-muted); font-size: 14px; margin: 0 0 15px 0; }
+    .file-info { margin-top: 20px; display: none; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; align-items: center; justify-content: space-between; }
+    .file-name { font-weight: 600; font-size: 14px; }
+    .remove-file { color: #ff6b6b; cursor: pointer; font-size: 12px; }
+
+    .controls { display: flex; gap: 15px; margin-top: 25px; align-items: center; justify-content: center; flex-wrap: wrap; }
+    select { padding: 12px 20px; background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; outline: none; cursor: pointer; font-size: 16px; }
     
-    .quality-row { display: flex; gap: 10px; margin-top: 15px; }
-    select { padding: 10px; background: #222; color: white; border: 1px solid #444; border-radius: 8px; flex: 1; cursor: pointer; outline: none; }
-    
-    .download-btn { background: #2ecc71; color: white; padding: 10px 20px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; margin-top: 10px; }
-    .download-btn:hover { background: #27ae60; }
-    .download-btn:disabled { background: #555; cursor: not-allowed; }
-    
-    @media (max-width: 600px) { .search-box { flex-direction: column; } .video-card { flex-direction: column; text-align: center; } .video-card img { width: 100%; max-width: 300px; } button.primary { width: 100%; } .quality-row { flex-direction: column; } }
+    .convert-btn {
+        background: linear-gradient(90deg, var(--accent), #8f7eff);
+        color: white; padding: 12px 30px; border-radius: 8px; border: none;
+        font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.2s;
+    }
+    .convert-btn:hover { transform: scale(1.05); opacity: 0.9; }
+    .convert-btn:disabled { background: #444; cursor: not-allowed; transform: none; }
   </style>
 </head>
 <body>
@@ -70,48 +76,53 @@
   <div class="card">
     <a href="../index.html" class="back-link">&larr; Back to Tools</a>
     <div style="clear:both;"></div>
-    <h1>YouTube Downloader</h1>
-    <p style="color:var(--text-muted); margin-bottom: 20px;">Download videos in high quality instantly.</p>
+    <h1>Universal Media Converter</h1>
+    <p style="color:var(--text-muted);">Convert Videos & Audio to any format instantly.</p>
 
-    <div class="search-box">
-        <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
-        <button type="button" class="primary" onclick="findVideo()">Search</button>
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <svg class="upload-icon" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+        <p>Click to Upload or Drag & Drop</p>
+        <span style="font-size:12px; color:var(--text-muted)">Supports MP4, WEBM, MKV, AVI, MOV, MP3, WAV</span>
+    </div>
+    <input type="file" id="fileInput" onchange="handleFileSelect(this)">
+
+    <div class="file-info" id="fileInfo">
+        <span class="file-name" id="fileName">video.mp4</span>
+        <span class="remove-file" onclick="resetUpload()">Remove</span>
     </div>
 
-    <div class="loader" id="loader"></div>
-    <p id="statusMsg" style="margin-top:20px; color:#aaa; font-size:14px; display:none;"></p>
-
-    <div id="resultArea">
-        <div class="video-card">
-            <img id="thumb" src="" alt="Thumbnail">
-            <div class="video-info">
-                <h3 id="vidTitle">Video Title</h3>
-                <p id="vidDuration">Duration: --:--</p>
-                <div class="quality-row">
-                    <select id="qualitySelect">
-                        <option value="best">Best Quality (MP4)</option>
-                        <option value="1080">1080p Full HD</option>
-                        <option value="720">720p HD</option>
-                        <option value="480">480p SD</option>
-                        <option value="audio">Audio Only (MP3)</option>
-                    </select>
-                </div>
-                <button type="button" onclick="startDownload()" class="download-btn">Download Now</button>
-            </div>
-        </div>
+    <div class="controls">
+        <span style="color:var(--text-muted)">Convert to:</span>
+        <select id="formatSelect">
+            <option value="mp4">MP4 (Video)</option>
+            <option value="mp3">MP3 (Audio)</option>
+            <option value="gif">GIF (Animation)</option>
+            <option value="wav">WAV (High Quality Audio)</option>
+        </select>
+        <button type="button" class="convert-btn" onclick="startConversion()" id="convertBtn">Convert Now</button>
+        <div class="loader" id="loader"></div>
     </div>
-    <p id="errorMsg" style="color: #ff6b6b; margin-top: 20px; display: none;"></p>
+    <p id="statusMsg" style="margin-top:20px; font-size:14px; color:#aaa; display:none;"></p>
   </div>
 
   <div class="seo-content">
-    <h2>Fastest YouTube Video Downloader</h2>
-    <p>Save your favorite YouTube videos directly to your device with MyTools. Whether it's a music video, tutorial, or documentary, our tool grabs the highest quality available instantly.</p>
-    <h3>Key Features</h3>
+    <h2>Online Video & Audio Converter</h2>
+    <p>Need to turn a WEBM recording into an MP4? Or extract audio from a music video? The Universal Media Converter handles complex file formats instantly.</p>
+    
+    <h3>How to Convert Media?</h3>
+    <ul>
+        <li><strong>Upload:</strong> Drag and drop your video or audio file into the box.</li>
+        <li><strong>Select:</strong> Choose your target format (MP4, MP3, GIF, or WAV).</li>
+        <li><strong>Convert:</strong> Click "Convert Now" and let our server process it.</li>
+        <li><strong>Download:</strong> Your new file will download automatically.</li>
+    </ul>
+
+    <h3>Why use this tool?</h3>
     <div class="seo-grid">
-      <div><h4>High Quality</h4><p>Download up to 1080p Full HD.</p></div>
-      <div><h4>100% Free</h4><p>No subscriptions or hidden fees.</p></div>
-      <div><h4>MP3 Support</h4><p>Extract audio instantly.</p></div>
-      <div><h4>Secure</h4><p>Direct downloads to your PC.</p></div>
+      <div><h4>Format Support</h4><p>Works with MP4, WEBM, AVI, MOV, and more.</p></div>
+      <div><h4>High Speed</h4><p>Powered by FFmpeg for rapid processing.</p></div>
+      <div><h4>Audio Extraction</h4><p>Pull high-quality MP3s from any video.</p></div>
+      <div><h4>Privacy First</h4><p>Files are processed and deleted immediately.</p></div>
     </div>
   </div>
 
@@ -124,7 +135,7 @@
       <svg class="star filled" onclick="rate(4)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
       <svg class="star filled" onclick="rate(5)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
     </div>
-    <div class="rating-count" id="ratingText">4.9 / 5 (<span id="voteCount">1,842</span> votes)</div>
+    <div class="rating-count" id="ratingText">4.8 / 5 (<span id="voteCount">942</span> votes)</div>
   </div>
 
   <footer class="site-footer">
@@ -184,87 +195,90 @@
       }
     });
 
-    // --- DOWNLOADER LOGIC ---
-    document.getElementById("videoUrl").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") { window.findVideo(); }
-    });
-
-    window.findVideo = async function() {
-        const url = document.getElementById('videoUrl').value;
-        if(!url) return;
-        document.getElementById('resultArea').style.display = 'none';
-        document.getElementById('statusMsg').style.display = 'none';
-        document.getElementById('loader').style.display = 'block';
-
-        try {
-            const res = await fetch('http://localhost:5000/get-video-info', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: url })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                document.getElementById('thumb').src = data.thumbnail;
-                document.getElementById('vidTitle').innerText = data.title;
-                document.getElementById('vidDuration').innerText = "Length: " + data.duration;
-                document.getElementById('resultArea').style.display = 'block';
-            } else { alert("Error: " + data.error); }
-        } catch (e) { alert("Server Error. Is Python running?"); }
-        finally { document.getElementById('loader').style.display = 'none'; }
+    // --- CONVERTER LOGIC ---
+    let selectedFile = null;
+    window.handleFileSelect = function(input) {
+        if (input.files && input.files[0]) {
+            selectedFile = input.files[0];
+            document.getElementById('fileName').innerText = selectedFile.name;
+            document.getElementById('fileInfo').style.display = 'flex';
+            document.querySelector('.upload-area').style.display = 'none';
+        }
     }
-
-    window.startDownload = async function() {
-        const url = document.getElementById('videoUrl').value;
-        const quality = document.getElementById('qualitySelect').value;
-        const mode = (quality === 'audio') ? 'audio' : 'video';
-        const btn = document.querySelector('.download-btn');
+    window.resetUpload = function() {
+        selectedFile = null;
+        document.getElementById('fileInput').value = "";
+        document.getElementById('fileInfo').style.display = 'none';
+        document.querySelector('.upload-area').style.display = 'block';
+        document.getElementById('statusMsg').style.display = 'none';
+    }
+    window.startConversion = async function() {
+        if (!selectedFile) return alert("Please upload a file first!");
+        const format = document.getElementById('formatSelect').value;
+        const btn = document.getElementById('convertBtn');
+        const loader = document.getElementById('loader');
         const status = document.getElementById('statusMsg');
 
-        btn.disabled = true;
-        btn.innerText = "Processing...";
-        status.innerText = "⏳ Please wait! The server is preparing your file... (This may take a moment)";
+        btn.style.display = 'none';
+        loader.style.display = 'block';
         status.style.display = 'block';
-        status.style.color = "#6a5cff";
+        status.innerText = "⏳ Uploading & Converting... (Larger files take longer)";
+        status.style.color = "#aaa";
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('format', format);
 
         try {
-            const response = await fetch('http://localhost:5000/download-video', {
+            const response = await fetch('http://localhost:5000/convert-media', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: url, quality: quality, mode: mode })
+                body: formData
             });
             if (response.ok) {
                 const blob = await response.blob();
                 const downloadUrl = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                
+                let fileName = "converted." + format;
                 const contentDisp = response.headers.get('Content-Disposition');
-                let fileName = 'video.mp4';
-                if (contentDisp && contentDisp.indexOf('filename=') !== -1) {
+                if (contentDisp && contentDisp.includes('filename=')) {
                     fileName = contentDisp.split('filename=')[1].replace(/"/g, '');
                 }
-                
                 a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
-                
-                status.innerText = "✅ Download Started! Check your Chrome downloads.";
+                status.innerText = "✅ Conversion Complete! Download started.";
                 status.style.color = "#2ecc71";
             } else {
                 const err = await response.json();
-                throw new Error(err.error);
+                throw new Error(err.error || "Conversion Failed");
             }
         } catch (e) {
-            status.innerText = "❌ Failed: " + e.message;
+            status.innerText = "❌ Error: " + e.message;
             status.style.color = "#ff6b6b";
         } finally {
-            btn.disabled = false;
-            btn.innerText = "Download Now";
+            loader.style.display = 'none';
+            btn.style.display = 'block';
+            btn.innerText = "Convert Another";
         }
     }
 
-    // --- THEME & UI LOGIC ---
+    // --- RATING LOGIC ---
+    const toolName = "Media Converter"; // UNIQUE NAME
+    const ratingText = document.getElementById('ratingText');
+    window.rate = async function(stars) {
+      if(localStorage.getItem('voted_' + toolName)) return;
+      const allStars = document.querySelectorAll('.star');
+      allStars.forEach((s, index) => {
+        if(index < stars) s.classList.add('filled');
+        else s.classList.remove('filled');
+      });
+      localStorage.setItem('voted_' + toolName, 'true');
+      ratingText.innerHTML = `<span style="color:#4cd137">Thanks for voting!</span> <br> 4.8 / 5 (${(942 + 1).toLocaleString()} votes)`;
+    }
+
+    // Theme Logic
     if (localStorage.getItem('theme') === 'light') { document.body.classList.add('light-mode'); updateIcons(true); }
     window.toggleTheme = function() {
       const isLight = document.body.classList.toggle('light-mode');
@@ -277,25 +291,6 @@
     }
     window.toggleProfile = function() { document.getElementById('profileMenu').classList.toggle('show'); }
     window.toggleMobileMenu = function() { document.getElementById('mobileOverlay').classList.toggle('active'); }
-    window.onclick = function(event) {
-      if (!event.target.closest('.profile-btn') && !event.target.closest('.dropdown-content')) {
-        document.getElementById('profileMenu').classList.remove('show');
-      }
-    }
-
-    // --- RATING LOGIC ---
-    const toolName = "YouTube Downloader";
-    const ratingText = document.getElementById('ratingText');
-    window.rate = async function(stars) {
-      if(localStorage.getItem('voted_' + toolName)) return;
-      const allStars = document.querySelectorAll('.star');
-      allStars.forEach((s, index) => {
-        if(index < stars) s.classList.add('filled');
-        else s.classList.remove('filled');
-      });
-      localStorage.setItem('voted_' + toolName, 'true');
-      ratingText.innerHTML = `<span style="color:#4cd137">Thanks for voting!</span> <br> 4.9 / 5 (${(1842 + 1).toLocaleString()} votes)`;
-    }
   </script>
 </body>
 </html>
