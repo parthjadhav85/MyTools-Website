@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico..jpg" />
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Contact Us - Video Looper</title>
+<style>
+  body{margin:0;font-family:'Poppins',sans-serif;background:#0f0f0f;color:#fff;display:flex;justify-content:center;padding:40px;}
+  .container{max-width:600px;width:100%;background:#111;padding:30px;border-radius:12px;border:1px solid #222;}
+  h1{margin-top:0;background:linear-gradient(90deg,#6a5cff,#9d8bff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  label{display:block;margin:15px 0 5px;color:#9aa0b4;font-size:14px;}
+  input,textarea{width:100%;padding:12px;background:#0b0b0b;border:1px solid #333;color:white;border-radius:6px;box-sizing:border-box;font-family:inherit;}
+  button{width:100%;padding:14px;margin-top:20px;background:#6a5cff;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;}
+  button:hover{background:#584cd1;}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Contact Us</h1>
+  <p style="color:#ccc;margin-bottom:20px;">Have questions or suggestions? Reach out.</p>
+  
+  <form action="https://formspree.io/f/mzdbklad" method="POST">
+    
+    <label>Email Address</label>
+    <input type="email" name="email" placeholder="you@example.com" required>
+    
+    <label>Subject</label>
+    <input type="text" name="subject" placeholder="General Inquiry" required>
+    
+    <label>Message</label>
+    <textarea name="message" rows="5" placeholder="How can we help?" required></textarea>
+    
+    <button type="submit">Send Message</button>
+  </form>
+  </div>
+</body>
+</html>

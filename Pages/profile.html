@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    :root { --bg: #0f0f0f; --card: #111; --text: #fff; --muted: #9aa0b4; --accent: #6a5cff; --border: rgba(255,255,255,0.08); }
+    body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+    
+    .container { width: 100%; max-width: 800px; margin-top: 40px; }
+    .back-link { color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 5px; margin-bottom: 20px; }
+    
+    .profile-header { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 30px; display: flex; align-items: center; gap: 20px; margin-bottom: 30px; position: relative;}
+    .avatar-large { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover; }
+    .user-info h1 { margin: 0 0 5px 0; font-size: 24px; }
+    .user-info p { margin: 0; color: var(--muted); }
+    
+    .logout-btn { position: absolute; right: 30px; top: 30px; background: #222; border: 1px solid #333; color: #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    
+    h2 { border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; font-size: 18px; color: var(--muted); }
+    
+    .history-list { display: flex; flex-direction: column; gap: 10px; }
+    .history-item { background: var(--card); border: 1px solid var(--border); padding: 15px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .action-name { font-weight: 600; display: block; }
+    .action-date { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="../index.html" class="back-link">&larr; Back to Home</a>
+
+    <div class="profile-header" id="profileHeader" style="display:none;">
+      <img id="userAvatar" class="avatar-large" src="" alt="User">
+      <div class="user-info">
+        <h1 id="userName">Loading...</h1>
+        <p id="userEmail">...</p>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </div>
+
+    <h2>Cloud History (Syncs across devices)</h2>
+    <div class="history-list" id="historyList">
+      <div style="text-align:center; padding: 20px; color:#666;">Loading history...</div>
+    </div>
+  </div>
+
+ <script type="module">
+    import { auth, db, doc, getDoc, setDoc, signOut, onAuthStateChanged } from "../firebase-config.js";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        document.getElementById('profileHeader').style.display = "flex";
+        
+        const docRef = doc(db, "users", user.uid);
+        let docSnap = await getDoc(docRef);
+
+        // --- SELF REPAIR: If DB entry is missing, create it now ---
+        if (!docSnap.exists()) {
+          console.log("Repairing missing profile...");
+          await setDoc(docRef, {
+            name: user.displayName || user.email.split('@')[0],
+            email: user.email,
+            photo: user.photoURL || "https://ui-avatars.com/api/?name=" + user.email,
+            role: "user",
+            joined: new Date().toISOString(),
+            isBanned: false,
+            history: []
+          });
+          // Fetch again after creating
+          docSnap = await getDoc(docRef);
+        }
+        // -----------------------------------------------------------
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById('userName').innerText = data.name;
+          document.getElementById('userEmail').innerText = data.email;
+          document.getElementById('userAvatar').src = data.photo;
+
+          const historyList = document.getElementById('historyList');
+          if(data.history && data.history.length > 0) {
+            historyList.innerHTML = data.history.map(item => `
+              <div class="history-item">
+                <span class="action-name">${item.action}</span>
+                <span class="action-date">${new Date(item.timestamp).toLocaleString()}</span>
+              </div>
+            `).join('');
+          } else {
+            historyList.innerHTML = '<div style="text-align:center; padding: 20px; color:#666;">No history found.</div>';
+          }
+        }
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      signOut(auth).then(() => window.location.href = "login.html");
+    });
+  </script>
+
+</body>
+</html>

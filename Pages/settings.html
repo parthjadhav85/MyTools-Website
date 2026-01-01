@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+    body { margin: 0; font-family: 'Poppins', sans-serif; background: #0f0f0f; color: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    
+    .settings-card {
+      background: #111; border: 1px solid rgba(255,255,255,0.1);
+      width: 100%; max-width: 500px; padding: 40px; border-radius: 20px;
+    }
+
+    h1 { margin: 0 0 30px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+    
+    .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .setting-info h3 { margin: 0 0 5px 0; font-size: 16px; }
+    .setting-info p { margin: 0; font-size: 13px; color: #888; }
+    
+    button { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; transition: 0.2s; }
+    
+    .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+    
+    .btn-danger { background: rgba(255, 68, 68, 0.1); color: #ff4444; }
+    .btn-danger:hover { background: #ff4444; color: white; }
+
+    .back-btn { position: absolute; top: 20px; left: 20px; color: #888; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <a href="../index.html" class="back-btn">&larr; Back to Home</a>
+
+  <div class="settings-card">
+    <h1>Settings</h1>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3>Clear Local Data</h3>
+        <p>Reset tool ratings and local history.</p>
+      </div>
+      <button class="btn-secondary" onclick="clearData()">Clear</button>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3>Delete Account</h3>
+        <p>Permanently remove your data.</p>
+      </div>
+      <button class="btn-danger" onclick="deleteAccount()">Delete</button>
+    </div>
+  </div>
+
+  <script>
+    function clearData() {
+      localStorage.clear();
+      alert("Local history and tool preferences cleared.");
+    }
+
+    async function deleteAccount() {
+      if(confirm("Are you sure? This cannot be undone.")) {
+        const res = await fetch('/api/user/delete', { method: 'POST' });
+        const data = await res.json();
+        if(data.success) {
+          alert("Account deleted.");
+          window.location.href = "../index.html";
+        } else {
+          alert("Error deleting account.");
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>

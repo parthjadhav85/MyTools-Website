@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico.jpg" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Color Converter - MyTools</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+    
+    :root {
+      /* Default (Dark Mode) */
+      --bg: #0f0f0f;
+      --card: #111;
+      --text: #fff;
+      --text-muted: #9aa0b4;
+      --accent: #6a5cff;
+      --border: rgba(255,255,255,0.08);
+      --nav-bg: rgba(10, 10, 10, 0.9);
+      --input-bg: #0b0b0b;
+    }
+
+    /* Light Mode Overrides */
+    body.light-mode {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #666;
+      --border: rgba(0,0,0,0.1);
+      --accent: #6a5cff;
+      --nav-bg: rgba(255, 255, 255, 0.9);
+      --input-bg: #f0f0f0;
+    }
+
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Poppins', sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      min-height: 100vh; 
+    }
+
+    /* --- NAVBAR CSS --- */
+    .navbar {
+      width: 100%; height: 70px; background: var(--nav-bg);
+      backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 1000; display: flex; align-items: center;
+    }
+    .nav-container {
+      width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+    .brand-logo { height: 40px; width: 40px; border-radius: 8px; object-fit: cover; }
+    .brand-text { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    .nav-menu { display: flex; align-items: center; gap: 30px; }
+    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s; }
+    .nav-link:hover { color: var(--text); }
+    
+    .theme-btn {
+      background: none; border: none; cursor: pointer; color: var(--text-muted);
+      padding: 8px; border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+    }
+    .theme-btn:hover { background: var(--border); color: var(--text); }
+    .theme-btn svg { width: 22px; height: 22px; }
+
+    /* Profile Dropdown */
+    .profile-dropdown { position: relative; }
+    .profile-btn { background: none; border: none; cursor: pointer; padding: 0; }
+    .avatar-circle {
+      width: 38px; height: 38px; background: linear-gradient(135deg, #333, #444);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #fff; border: 2px solid var(--border); transition: border-color 0.2s;
+    }
+    .avatar-circle:hover { border-color: var(--accent); }
+    .avatar-circle svg { width: 20px; height: 20px; }
+    
+    .dropdown-content {
+      display: none; position: absolute; right: 0; top: 50px;
+      background: var(--card); min-width: 220px; border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid var(--border);
+      overflow: hidden; flex-direction: column;
+    }
+    .dropdown-content.show { display: flex; animation: slideDown 0.2s ease-out; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .dropdown-header { padding: 15px 20px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+    .dropdown-header p { margin: 0; font-weight: 600; color: var(--text); }
+    .dropdown-header span { font-size: 12px; color: var(--text-muted); }
+    .dropdown-content a {
+      padding: 12px 20px; color: var(--text-muted); text-decoration: none;
+      font-size: 14px; display: flex; align-items: center; gap: 10px; transition: background 0.2s;
+    }
+    .dropdown-content a:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .dropdown-content svg { width: 16px; height: 16px; opacity: 0.7; }
+    .dropdown-divider { height: 1px; background: var(--border); margin: 5px 0; }
+    
+    .hamburger { display: none; background: none; border: none; color: var(--text); cursor: pointer; }
+    .hamburger svg { width: 28px; height: 28px; }
+    .mobile-menu-overlay {
+      display: none; position: fixed; top: 70px; left: 0; width: 100%;
+      background: var(--bg); border-bottom: 1px solid var(--border); padding: 20px;
+      flex-direction: column; gap: 15px; z-index: 999;
+    }
+    .mobile-menu-overlay.active { display: flex; }
+    .mobile-links a { color: var(--text); text-decoration: none; font-size: 18px; padding: 10px 0; display: block; }
+    @media (max-width: 768px) { .nav-menu { display: none; } .hamburger { display: block; } }
+
+    /* --- COLOR PICKER TOOL CSS --- */
+    .card { 
+      width: 100%; max-width: 800px; background: var(--card); border-radius: 16px; 
+      padding: 32px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      margin: 40px 20px; box-sizing: border-box; text-align: center;
+    }
+    h1 { margin: 10px 0 20px; background: linear-gradient(90deg, #6a5cff, #9d8bff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600; }
+    
+    .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 15px; align-self: flex-start;}
+    .back-link:hover { color: var(--text); }
+
+    /* Picker Area */
+    .picker-area {
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    
+    .palette-box {
+      width: 100%; height: 250px; border-radius: 12px; position: relative;
+      background-color: red; /* Dynamic base hue */
+      background-image: 
+        linear-gradient(to bottom, transparent 0%, #000 100%),
+        linear-gradient(to right, #fff 0%, transparent 100%);
+      cursor: crosshair;
+      border: 1px solid var(--border);
+    }
+    
+    .dragger {
+      width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5); position: absolute; pointer-events: none;
+      transform: translate(-50%, -50%); top: 0; left: 100%; /* Default pos */
+    }
+
+    /* Hue Slider */
+    .hue-slider-container {
+      width: 100%; height: 20px; position: relative; border-radius: 10px; margin-bottom: 10px;
+      background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+    }
+    input[type=range].hue-range {
+      width: 100%; margin: 0; -webkit-appearance: none; background: transparent; cursor: pointer;
+    }
+    input[type=range].hue-range::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
+      background: #fff; border: 4px solid var(--card); box-shadow: 0 0 5px rgba(0,0,0,0.3); margin-top: -2px;
+    }
+
+    /* Hex Display */
+    .hex-display {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    }
+    .color-preview-circle {
+      width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--border);
+      background: #ff0000;
+    }
+    .hex-input-wrap {
+      flex: 1; position: relative;
+    }
+    .hex-input {
+      width: 100%; padding: 12px; background: var(--input-bg);
+      border: 1px solid var(--border); color: var(--text); border-radius: 8px;
+      font-family: monospace; font-size: 16px; font-weight: 600; text-transform: uppercase;
+      box-sizing: border-box;
+    }
+    .copy-icon {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      cursor: pointer; color: var(--text-muted);
+    }
+    .copy-icon:hover { color: var(--text); }
+
+    /* Values Grid */
+    .values-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;
+    }
+    @media (min-width: 600px) { .values-grid { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+    
+    .value-box {
+      background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+    }
+    .value-label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px; }
+    .value-data { font-size: 13px; font-weight: 500; font-family: monospace; word-break: break-all; }
+
+    /* Footer */
+    .site-footer { width: 100%; background: #050505; border-top: 1px solid var(--border); padding: 60px 20px 40px; margin-top: auto; font-size: 14px; color: var(--text-muted); box-sizing: border-box;}
+    .footer-content { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+    .footer-brand h2 { color: #fff; font-size: 24px; margin: 0 0 15px 0; }
+    .newsletter-form { position: relative; max-width: 300px; margin-top: 15px; }
+    .newsletter-form input { background: #111; border: 1px solid #333; border-radius: 50px; padding: 12px 20px; padding-right: 50px; width: 100%; outline: none; color: #fff; box-sizing: border-box; }
+    .newsletter-btn { position: absolute; right: 5px; top: 3px; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding:0; }
+    .footer-col h4 { color: #fff; margin: 0 0 20px 0; font-weight: 600; }
+    .footer-col ul { list-style: none; padding: 0; margin: 0; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .social-links { display: flex; gap: 15px; margin-top: 10px; }
+    .social-icon { width: 24px; height: 24px; fill: var(--text-muted); transition: fill 0.2s; }
+    .social-icon:hover { fill: #fff; }
+    @media (max-width: 768px) { .footer-content { grid-template-columns: 1fr; text-align: center; } .newsletter-form { margin: 15px auto; } .social-links { justify-content: center; } }
+    
+    /* SEO Content & Rating */
+    .seo-content { max-width: 900px; margin: 20px auto 60px; padding: 0 20px; color: var(--text-muted); text-align: left; line-height: 1.8; }
+    .seo-content h2 { color: var(--text); font-size: 28px; margin-top: 40px; }
+    .rating-section { text-align: center; margin: 40px auto; padding: 30px; max-width: 600px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .rating-label { font-size: 14px; color: var(--text); font-weight: 600; margin-bottom: 10px; }
+    .stars { display: inline-flex; gap: 8px; cursor: pointer; margin-bottom: 10px; }
+    .star { width: 28px; height: 28px; fill: #333; transition: fill 0.2s; }
+    .star.filled { fill: #ffc107; }
+    .rating-count { font-size: 13px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">
+        <img src="../logo1.png" alt="MyTools Logo" class="brand-logo">
+        <span class="brand-text">MyTools</span>
+      </a>
+
+      <div class="nav-menu" id="navMenu">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../pages/contact.html" class="nav-link">Contact</a>
+        <button class="theme-btn" onclick="toggleTheme()" title="Switch Theme">
+          <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <div class="profile-dropdown">
+          <button class="profile-btn" onclick="toggleProfile()">
+            <div class="avatar-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+          </button>
+          <div class="dropdown-content" id="profileMenu">
+            <div class="dropdown-header"><p>Guest User</p><span>Not logged in</span></div>
+            <a href="../pages/settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Settings</a>
+            <a href="../pages/profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Profile</a>
+            <div class="dropdown-divider"></div>
+            <a href="../pages/login.html" style="color:#ff6b6b;">Log In / Sign Up</a>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu-overlay" id="mobileOverlay">
+    <div class="mobile-links">
+      <a href="../index.html">Home</a>
+      <a href="../pages/contact.html">Contact Us</a>
+      <a href="../pages/faq.html">FAQ</a>
+      <hr style="border:0; border-top:1px solid #333; margin:10px 0;">
+      <a href="../pages/profile.html">My Profile</a>
+      <a href="../pages/settings.html">Settings</a>
+      <a href="../pages/login.html" style="color:var(--accent)">Log In</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <a href="../index.html" class="back-link">&larr; Back to Tools</a>
+    <h1>Color Converter</h1>
+    
+    <div class="picker-area">
+      <div class="palette-box" id="palette">
+        <div class="dragger" id="dragger"></div>
+      </div>
+      
+      <div class="hue-slider-container">
+        <input type="range" class="hue-range" min="0" max="360" value="0" id="hueSlider">
+      </div>
+      
+      <div class="hex-display">
+        <div class="color-preview-circle" id="previewCircle"></div>
+        <div class="hex-input-wrap">
+          <input type="text" class="hex-input" id="hexInput" value="#FF0000" maxlength="7">
+          <svg class="copy-icon" onclick="copyHex()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </div>
+      </div>
+
+      <div class="values-grid">
+        <div class="value-box"><span class="value-label">RGB</span><span class="value-data" id="rgbVal">255, 0, 0</span></div>
+        <div class="value-box"><span class="value-label">CMYK</span><span class="value-data" id="cmykVal">0%, 100%, 100%, 0%</span></div>
+        <div class="value-box"><span class="value-label">HSV</span><span class="value-data" id="hsvVal">0°, 100%, 100%</span></div>
+        <div class="value-box"><span class="value-label">HSL</span><span class="value-data" id="hslVal">0°, 100%, 50%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seo-content">
+    <h2>Advanced Color Picker & Converter</h2>
+    <p>Convert colors between HEX, RGB, HSL, HSV, and CMYK formats instantly. Use the interactive color palette to visually select the perfect shade for your project.</p>
+  </div>
+
+  <div class="rating-section">
+    <div class="rating-label">Rate this tool</div>
+    <div class="stars" id="starContainer">
+      <svg class="star filled" onclick="rate(1)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(2)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(3)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(4)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(5)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+    </div>
+    <div class="rating-count" id="ratingText">4.8 / 5 (<span id="voteCount">2,491</span> votes)</div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h2>MyTools</h2>
+        <p>The ultimate utility hub. Built for efficiency.</p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Enter your e-mail" />
+          <button class="newsletter-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="looper.html">Video Looper</a></li>
+          <li><a href="resizer.html">Image Resizer</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="../pages/faq.html">FAQ</a></li>
+          <li><a href="../pages/contact.html">Contact Us</a></li>
+          <li><a href="../pages/privacy.html">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow us</h4>
+        <div class="social-links">
+          <a href="https://instagram.com/_parthh.02" target="_blank" aria-label="Instagram"><svg class="social-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          <a href="https://discord.gg/azZZTwVk" target="_blank" aria-label="Discord"><svg class="social-icon" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037 14.16 14.16 0 0 0-.622 1.275 18.256 18.256 0 0 0-5.46 0 14.195 14.195 0 0 0-.622-1.275.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.679 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z"/></svg></a>
+          <a href="https://twitter.com" target="_blank" aria-label="Twitter"><svg class="social-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="https://github.com/parthjadhav85" target="_blank" aria-label="GitHub"><svg class="social-icon" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:50px; opacity:0.5; font-size:12px;">&copy; 2025 MyTools. Designed with Code.</div>
+  </footer>
+
+  <script>
+    // --- COLOR PICKER LOGIC ---
+    const palette = document.getElementById('palette');
+    const dragger = document.getElementById('dragger');
+    const hueSlider = document.getElementById('hueSlider');
+    const hexInput = document.getElementById('hexInput');
+    const previewCircle = document.getElementById('previewCircle');
+    const rgbVal = document.getElementById('rgbVal');
+    const cmykVal = document.getElementById('cmykVal');
+    const hsvVal = document.getElementById('hsvVal');
+    const hslVal = document.getElementById('hslVal');
+
+    let currentHue = 0;
+    let currentSat = 100;
+    let currentVal = 100;
+    let isDragging = false;
+
+    // 1. Initialize
+    updateColorFromHSV();
+
+    // 2. Drag Logic
+    palette.addEventListener('mousedown', startDrag);
+    palette.addEventListener('touchstart', startDrag);
+
+    function startDrag(e) {
+      isDragging = true;
+      moveDrag(e);
+      document.addEventListener('mousemove', moveDrag);
+      document.addEventListener('mouseup', stopDrag);
+      document.addEventListener('touchmove', moveDrag);
+      document.addEventListener('touchend', stopDrag);
+    }
+
+    function moveDrag(e) {
+      if(!isDragging) return;
+      const rect = palette.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+      let x = clientX - rect.left;
+      let y = clientY - rect.top;
+
+      // Clamp values
+      if(x < 0) x = 0; if(x > rect.width) x = rect.width;
+      if(y < 0) y = 0; if(y > rect.height) y = rect.height;
+
+      // Move UI circle
+      dragger.style.left = x + 'px';
+      dragger.style.top = y + 'px';
+
+      // Calculate S and V
+      currentSat = Math.round((x / rect.width) * 100);
+      currentVal = Math.round(100 - (y / rect.height) * 100);
+      updateColorFromHSV();
+    }
+
+    function stopDrag() {
+      isDragging = false;
+      document.removeEventListener('mousemove', moveDrag);
+      document.removeEventListener('mouseup', stopDrag);
+    }
+
+    // 3. Hue Slider Logic
+    hueSlider.addEventListener('input', (e) => {
+      currentHue = e.target.value;
+      palette.style.backgroundColor = `hsl(${currentHue}, 100%, 50%)`;
+      updateColorFromHSV();
+    });
+
+    // 4. Update from Text Input
+    hexInput.addEventListener('input', (e) => {
+      const hex = e.target.value;
+      if(/^#[0-9A-F]{6}$/i.test(hex)) {
+        const rgb = hexToRgb(hex);
+        const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+        
+        currentHue = hsv.h;
+        currentSat = hsv.s;
+        currentVal = hsv.v;
+
+        // Update UI positions
+        hueSlider.value = currentHue;
+        palette.style.backgroundColor = `hsl(${currentHue}, 100%, 50%)`;
+        
+        // Reposition dragger (simplified approximation)
+        const rect = palette.getBoundingClientRect();
+        dragger.style.left = (currentSat / 100) * rect.width + 'px';
+        dragger.style.top = (1 - currentVal / 100) * rect.height + 'px';
+
+        updateTextValues(rgb.r, rgb.g, rgb.b);
+      }
+    });
+
+    function updateColorFromHSV() {
+      const rgb = hsvToRgb(currentHue, currentSat, currentVal);
+      const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+
+      previewCircle.style.backgroundColor = hex;
+      if(document.activeElement !== hexInput) hexInput.value = hex;
+      
+      updateTextValues(rgb.r, rgb.g, rgb.b);
+    }
+
+    function updateTextValues(r, g, b) {
+      // RGB
+      rgbVal.innerText = `${r}, ${g}, ${b}`;
+      
+      // CMYK
+      const cmyk = rgbToCmyk(r, g, b);
+      cmykVal.innerText = `${cmyk.c}%, ${cmyk.m}%, ${cmyk.y}%, ${cmyk.k}%`;
+
+      // HSV
+      hsvVal.innerText = `${Math.round(currentHue)}°, ${Math.round(currentSat)}%, ${Math.round(currentVal)}%`;
+
+      // HSL
+      const hsl = rgbToHsl(r, g, b);
+      hslVal.innerText = `${hsl.h}°, ${hsl.s}%, ${hsl.l}%`;
+    }
+
+    function copyHex() {
+      navigator.clipboard.writeText(hexInput.value);
+      alert("Hex code copied!");
+    }
+
+    // --- HELPER MATH FUNCTIONS ---
+    function hsvToRgb(h, s, v) {
+      s /= 100; v /= 100;
+      let f= (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0);     
+      return { r: Math.round(f(5)*255), g: Math.round(f(3)*255), b: Math.round(f(1)*255) };
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.slice(1), 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
+    function rgbToHsv(r, g, b) {
+      r/=255, g/=255, b/=255;
+      let v=Math.max(r,g,b), c=v-Math.min(r,g,b);
+      let h= c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c)); 
+      return { h: 60*(h<0?h+6:h), s: v&&c/v*100, v: v*100 };
+    }
+
+    function rgbToHsl(r, g, b) {
+      r/=255; g/=255; b/=255;
+      const max = Math.max(r,g,b), min = Math.min(r,g,b);
+      let h, s, l = (max+min)/2;
+      if(max === min) h = s = 0; 
+      else {
+        const d = max-min;
+        s = l > 0.5 ? d/(2-max-min) : d/(max+min);
+        switch(max){ case r: h=(g-b)/d+(g<b?6:0); break; case g: h=(b-r)/d+2; break; case b: h=(r-g)/d+4; break; }
+        h/=6;
+      }
+      return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
+    }
+
+    function rgbToCmyk(r, g, b) {
+      let c = 1 - (r/255);
+      let m = 1 - (g/255);
+      let y = 1 - (b/255);
+      let k = Math.min(c, m, y);
+      c = ((c - k) / (1 - k)) || 0;
+      m = ((m - k) / (1 - k)) || 0;
+      y = ((y - k) / (1 - k)) || 0;
+      return { c: Math.round(c*100), m: Math.round(m*100), y: Math.round(y*100), k: Math.round(k*100) };
+    }
+
+    // --- STANDARD SCRIPTS (Auth, Theme, etc.) ---
+    async function loadRating() {
+      try {
+        const response = await fetch(`/api/rating/${encodeURIComponent(document.title)}`);
+        const data = await response.json();
+        document.getElementById('ratingText').innerHTML = `${data.average} / 5 (<span id="voteCount">${data.votes.toLocaleString()}</span> votes)`;
+      } catch (e) { console.log("Offline mode"); }
+    }
+    loadRating();
+
+    async function checkLogin() {
+      try {
+        const res = await fetch('/api/me');
+        const data = await res.json();
+        if (data.loggedIn) {
+          document.querySelector('.dropdown-header p').innerText = data.name;
+          document.querySelector('.dropdown-header span').innerText = "Member";
+          const link = document.querySelector('a[href$="login.html"]');
+          link.innerText = "Log Out"; link.href = "#"; link.onclick = async () => { await fetch('/api/logout', { method: 'POST' }); location.reload(); };
+        }
+      } catch (e) {}
+    }
+    checkLogin();
+
+    if (localStorage.getItem('theme') === 'light') { document.body.classList.add('light-mode'); document.getElementById('sunIcon').style.display='none'; document.getElementById('moonIcon').style.display='block'; }
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle('light-mode');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      document.getElementById('sunIcon').style.display = isLight ? 'none' : 'block';
+      document.getElementById('moonIcon').style.display = isLight ? 'block' : 'none';
+    }
+    function toggleProfile() { document.getElementById('profileMenu').classList.toggle('show'); }
+    function toggleMobileMenu() { document.getElementById('mobileOverlay').classList.toggle('active'); }
+    window.onclick = function(e) {
+      if (!e.target.closest('.profile-btn') && !e.target.closest('.dropdown-content')) document.getElementById('profileMenu').classList.remove('show');
+    }
+  </script>
+</body>
+</html>

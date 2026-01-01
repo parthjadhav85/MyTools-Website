@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sign Up - MyTools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    body { font-family: 'Poppins', sans-serif; background: #0f0f0f; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .auth-box { background: #111; padding: 40px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 400px; text-align: center; }
+    h1 { margin-bottom: 20px; color: #fff; }
+    input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #333; background: #0b0b0b; color: #fff; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #6a5cff; color: #fff; font-weight: 600; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+    .link { margin-top: 15px; font-size: 14px; color: #888; }
+    .link a { color: #6a5cff; text-decoration: none; }
+    .error { color: #ff6b6b; font-size: 14px; margin-bottom: 15px; display: none; }
+  </style>
+</head>
+<body>
+  <div class="auth-box">
+    <h1>Create Account</h1>
+    <div id="errorMsg" class="error"></div>
+    <input type="text" id="name" placeholder="Full Name" />
+    <input type="email" id="email" placeholder="Email Address" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="register()">Sign Up</button>
+    <div class="link">Already have an account? <a href="login.html">Log In</a></div>
+  </div>
+
+  <script>
+    async function register() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          window.location.href = '../index.html';
+        } else {
+          errorMsg.innerText = data.error;
+          errorMsg.style.display = 'block';
+        }
+      } catch (e) {
+        errorMsg.innerText = "Connection error";
+        errorMsg.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

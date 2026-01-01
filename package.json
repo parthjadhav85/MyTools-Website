@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.1",
+    "connect-mongo": "^3.2.0",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "firebase": "^12.7.0",
+    "helmet": "^8.1.0",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.0.2"
+  },
+  "name": "working-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
