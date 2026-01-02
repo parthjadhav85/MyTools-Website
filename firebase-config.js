@@ -26,4 +26,21 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
+// Add this to the bottom of firebase-config.js
+export async function logActivity(user, toolName, action) {
+  if (!user) return;
+  try {
+    const userRef = doc(db, "users", user.uid);
+    await updateDoc(userRef, {
+      history: arrayUnion({
+        tool: toolName,
+        action: action,
+        timestamp: new Date().toISOString()
+      })
+    });
+  } catch (e) {
+    console.error("Error logging activity:", e);
+  }
+}
+
 export { auth, db, provider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, doc, setDoc, getDoc, updateDoc, arrayUnion };

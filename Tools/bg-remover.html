@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico.jpg" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Free AI Background Remover - Unlimited</title>
+  
+  <link rel="stylesheet" href="../css/tools-shared.css">
+
+  <style>
+    /* Tool Specific Styling */
+    .compare-container {
+        display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 30px;
+    }
+    .img-box {
+        flex: 1; min-width: 300px; max-width: 400px;
+        background: #1a1a1a; border-radius: 12px; border: 1px solid var(--border);
+        overflow: hidden; position: relative;
+    }
+    .img-box h4 {
+        margin: 0; padding: 10px; background: rgba(0,0,0,0.5); 
+        color: #fff; font-size: 14px; text-align: center;
+        position: absolute; top: 0; width: 100%; z-index: 2;
+    }
+    .img-box img {
+        width: 100%; height: auto; display: block;
+        /* Transparency Checkboard */
+        background-image: linear-gradient(45deg, #2a2a2a 25%, transparent 25%), linear-gradient(-45deg, #2a2a2a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #2a2a2a 75%), linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    
+    .upload-area {
+        border: 2px dashed var(--border); background: rgba(255,255,255,0.02); border-radius: 16px;
+        padding: 50px 20px; text-align: center; cursor: pointer; transition: 0.3s;
+    }
+    .upload-area:hover { border-color: var(--accent); background: rgba(106, 92, 255, 0.05); }
+
+    .status-msg { margin-top: 15px; color: var(--accent); font-weight: 500; display:none; text-align:center; }
+    
+    .progress-bar { width: 100%; height: 6px; background: #222; border-radius: 3px; margin-top: 15px; overflow: hidden; display: none; }
+    .progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.3s; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">
+        <img src="../logo1.png" alt="MyTools Logo" class="brand-logo">
+        <span class="brand-text">MyTools</span>
+      </a>
+      <div class="nav-menu" id="navMenu">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../pages/contact.html" class="nav-link">Contact</a>
+        <button class="theme-btn" onclick="toggleTheme()"><svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg><svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        <div class="profile-dropdown">
+          <button class="profile-btn" onclick="toggleProfile()">
+            <div class="avatar-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+          </button>
+          <div class="dropdown-content" id="profileMenu">
+            <div class="dropdown-header"><p>Guest User</p><span>Not logged in</span></div>
+            <a href="../pages/settings.html">Settings</a><a href="../pages/profile.html">Profile</a><div class="dropdown-divider"></div><a href="../pages/login.html" style="color:#ff6b6b;">Log In</a>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu-overlay" id="mobileOverlay">
+    <div class="mobile-links">
+      <a href="../index.html">Home</a><a href="../pages/contact.html">Contact Us</a><a href="../pages/faq.html">FAQ</a><hr style="border:0; border-top:1px solid #333; margin:10px 0;"><a href="../pages/profile.html">My Profile</a><a href="../pages/settings.html">Settings</a><a href="../pages/login.html" style="color:var(--accent)">Log In</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <a href="../index.html" class="back-link">&larr; Back to Tools</a>
+    <div style="clear:both;"></div>
+    
+    <h1>Background Remover</h1>
+    <p style="color:var(--text-muted); margin-bottom: 25px;">Remove backgrounds from images automatically. <span style="color:#ff6b6b; font-size:12px;">(Requires good internet for first use)</span></p>
+
+    <div class="upload-area" id="uploadBox" onclick="document.getElementById('fileInput').click()">
+        <svg style="width:48px; height:48px; fill:var(--accent); margin-bottom:15px; opacity:0.9;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+        <p style="margin:0; font-weight:500;">Click to upload Image</p>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+    <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+    <p id="statusMsg" class="status-msg">Initializing...</p>
+
+    <div id="resultArea" style="display:none;">
+        <div class="compare-container">
+            <div class="img-box">
+                <h4>Original</h4>
+                <img id="originalImg" src="">
+            </div>
+            <div class="img-box">
+                <h4>Background Removed</h4>
+                <img id="processedImg" src="">
+            </div>
+        </div>
+        <button id="downloadBtn" class="primary" style="margin-top:20px;">Download HD Image</button>
+        <button onclick="location.reload()" style="margin-top:10px;">Process Another Image</button>
+    </div>
+  </div>
+
+  <div class="seo-content">
+    <h2>The Best Free AI Background Remover Online</h2>
+    <p>
+      Creating professional-looking photos used to require hours of editing in Photoshop. Now, with the <strong>MyTools AI Background Remover</strong>, you can automatically delete image backgrounds in seconds. Whether you are an e-commerce seller, a graphic designer, or just updating your profile picture, our tool delivers high-quality <strong>transparent PNGs</strong> instantly.
+    </p>
+
+    <h3>Why use our Background Eraser?</h3>
+    <div class="seo-grid">
+      <div>
+        <h4>100% Free & Unlimited</h4>
+        <p>Unlike other tools that charge for HD downloads, MyTools is completely free. Process as many images as you need without credits or subscriptions.</p>
+      </div>
+      <div>
+        <h4>Maximum Privacy</h4>
+        <p>We use client-side <strong>WebAssembly AI</strong>. This means your photos are processed directly on your device and are <strong>never uploaded</strong> to a server. Your data stays safe.</p>
+      </div>
+      <div>
+        <h4>AI Precision</h4>
+        <p>Our advanced machine learning model accurately detects hair, fur, and complex edges to separate the subject from the background cleanly.</p>
+      </div>
+      <div>
+        <h4>High Resolution</h4>
+        <p>Download your images in full resolution. We don't compress or shrink your photos, ensuring crisp results for print or web.</p>
+      </div>
+    </div>
+
+    <h3>How to Remove Background from Image Free?</h3>
+    <p>Follow these simple steps to make your background transparent:</p>
+    <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+      <li><strong>Upload Image:</strong> Click the upload box and select any JPG, PNG, or WEBP file.</li>
+      <li><strong>Wait for AI:</strong> Our AI will automatically analyze the image and isolate the subject (this takes just a few seconds).</li>
+      <li><strong>Download:</strong> Preview the result and click "Download HD Image" to save your transparent PNG.</li>
+    </ol>
+
+    <h3>Perfect for Every Use Case</h3>
+    <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+      <li><strong>E-Commerce:</strong> Create clean, white-background product photos for Amazon, eBay, or Shopify.</li>
+      <li><strong>Social Media:</strong> Make stickers for WhatsApp, YouTube thumbnails, or Instagram stories.</li>
+      <li><strong>Marketing:</strong> Place your products or portraits onto new backgrounds for ads and banners.</li>
+    </ul>
+
+    <h3>Frequently Asked Questions (FAQ)</h3>
+    <div style="margin-top: 20px;">
+      <h4 style="margin-bottom:5px; color:var(--text);">Is this tool really free?</h4>
+      <p style="margin-bottom:15px;">Yes! Our background remover is 100% free with no hidden costs. You can edit unlimited images.</p>
+      
+      <h4 style="margin-bottom:5px; color:var(--text);">Do you keep my photos?</h4>
+      <p style="margin-bottom:15px;">No. Unlike other websites, we process images locally in your browser. Your photos never leave your device.</p>
+      
+      <h4 style="margin-bottom:5px; color:var(--text);">What formats are supported?</h4>
+      <p>We support high-quality JPG, PNG, and WEBP formats. The output will always be a PNG with a transparent background.</p>
+    </div>
+  </div>
+
+<div class="rating-section">
+    <div class="rating-label">Rate this tool</div>
+    <div class="stars" id="starContainer">
+      <svg class="star filled" onclick="rate(1)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(2)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(3)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(4)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(5)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+    </div>
+    <div class="rating-count" id="ratingText">4.7 / 5 (<span id="voteCount">853</span> votes)</div>
+  </div>
+
+   <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h2>MyTools</h2>
+        <p>The ultimate utility hub. Built for efficiency.</p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Enter your e-mail" />
+          <button class="newsletter-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="looper.html">Video Looper</a></li>
+          <li><a href="resizer.html">Image Resizer</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="../pages/faq.html">FAQ</a></li>
+          <li><a href="../pages/contact.html">Contact Us</a></li>
+          <li><a href="../pages/privacy.html">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow us</h4>
+        <div class="social-links">
+          <a href="https://instagram.com/_parthh.02" target="_blank" aria-label="Instagram"><svg class="social-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          <a href="https://discord.gg/azZZTwVk" target="_blank" aria-label="Discord"><svg class="social-icon" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037 14.16 14.16 0 0 0-.622 1.275 18.256 18.256 0 0 0-5.46 0 14.195 14.195 0 0 0-.622-1.275.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.679 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z"/></svg></a>
+          <a href="https://twitter.com" target="_blank" aria-label="Twitter"><svg class="social-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="https://github.com/parthjadhav85" target="_blank" aria-label="GitHub"><svg class="social-icon" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:50px; opacity:0.5; font-size:12px;">&copy; 2025 MyTools.</div>
+  </footer>
+
+  <script>
+    // Theme & Menu Logic
+    function toggleProfile(){document.getElementById('profileMenu').classList.toggle('show');}
+    function toggleMobileMenu(){document.getElementById('mobileOverlay').classList.toggle('active');}
+    if(localStorage.getItem('theme')==='light'){document.body.classList.add('light-mode');document.getElementById('sunIcon').style.display='none';document.getElementById('moonIcon').style.display='block';}
+    function toggleTheme(){const isLight=document.body.classList.toggle('light-mode');localStorage.setItem('theme',isLight?'light':'dark');document.getElementById('sunIcon').style.display=isLight?'none':'block';document.getElementById('moonIcon').style.display=isLight?'block':'none';}
+    window.onclick=function(e){if(!e.target.closest('.profile-btn')&&!e.target.closest('.dropdown-content')){document.getElementById('profileMenu').classList.remove('show');}}
+  </script>
+
+  <script type="module">
+    // FIX: Use named import { removeBackground }
+    import { removeBackground } from "https://cdn.jsdelivr.net/npm/@imgly/background-removal/+esm";
+
+    const fileInput = document.getElementById('fileInput');
+    const uploadBox = document.getElementById('uploadBox');
+    const statusMsg = document.getElementById('statusMsg');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const resultArea = document.getElementById('resultArea');
+    const originalImg = document.getElementById('originalImg');
+    const processedImg = document.getElementById('processedImg');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    fileInput.addEventListener('change', async (e) => {
+        if(e.target.files.length === 0) return;
+        
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = (event) => { originalImg.src = event.target.result; };
+        reader.readAsDataURL(file);
+
+        // UI Updates
+        uploadBox.style.display = 'none';
+        progressBar.style.display = 'block';
+        statusMsg.style.display = 'block';
+        progressFill.style.width = '5%';
+        statusMsg.innerText = "Downloading AI Model (~80MB)... This only happens once.";
+
+        try {
+            // Log start
+            if(window.logAction) window.logAction("Started BG Removal");
+
+            // Run AI
+            const blob = await removeBackground(file, {
+                progress: (key, current, total) => {
+                    // Calculate percentage
+                    const percent = Math.round((current / total) * 100);
+                    
+                    // Update UI based on phase
+                    if(key.includes('fetch')) {
+                        statusMsg.innerText = `Downloading assets... ${percent}%`;
+                        progressFill.style.width = (percent / 2) + '%'; // First 50%
+                    } else if(key.includes('inference')) {
+                        statusMsg.innerText = `Processing Image...`;
+                        progressFill.style.width = (50 + (percent / 2)) + '%'; // Last 50%
+                    }
+                }
+            });
+
+            // Success
+            const url = URL.createObjectURL(blob);
+            processedImg.src = url;
+            
+            progressBar.style.display = 'none';
+            statusMsg.style.display = 'none';
+            resultArea.style.display = 'block';
+
+            // Log success
+            if(window.logAction) window.logAction("Completed BG Removal");
+
+            downloadBtn.onclick = () => {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "bg-removed.png";
+                a.click();
+            };
+
+        } catch (error) {
+            console.error(error);
+            statusMsg.style.color = '#ff6b6b';
+            statusMsg.innerText = "Error: " + error.message;
+            uploadBox.style.display = 'block';
+        }
+    });
+  </script>
+
+  <script type="module">
+    import { auth, db, doc, getDoc, signOut, onAuthStateChanged, logActivity } from "../firebase-config.js";
+
+    // Expose logger safely
+    window.logAction = (action) => {
+        if(auth.currentUser) logActivity(auth.currentUser, "BG Remover", action);
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+      const profileMenu = document.getElementById('profileMenu');
+      const headerText = profileMenu.querySelector('.dropdown-header p');
+      const subText = profileMenu.querySelector('.dropdown-header span');
+      const loginLink = profileMenu.querySelector('a[style*="color:#ff6b6b"]');
+      if (user) {
+        headerText.innerText = user.displayName || user.email.split('@')[0];
+        subText.innerText = "Member";
+        try { const docSnap = await getDoc(doc(db, "users", user.uid)); if(docSnap.exists()) headerText.innerText = docSnap.data().name; } catch(e){}
+        if(loginLink) { loginLink.innerText = "Log Out"; loginLink.href = "#"; loginLink.onclick = async (e) => { e.preventDefault(); await signOut(auth); window.location.reload(); }; }
+      }
+    });
+  </script>
+
+</body>
+</html>

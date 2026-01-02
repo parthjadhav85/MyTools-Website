@@ -44,11 +44,27 @@
       min-height: 100vh; 
     }
 
-    .hero { text-align: center; padding: 80px 20px; }
-    .hero h1 { font-size: 48px; margin-bottom: 10px; background: linear-gradient(90deg, #6a5cff, #9d8bff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    /* --- HERO SECTION (Dynamic) --- */
+    .hero { text-align: center; padding: 80px 20px 40px; transition: padding 0.3s; }
+    .hero h1 { font-size: 48px; margin-bottom: 10px; background: linear-gradient(90deg, #6a5cff, #9d8bff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: font-size 0.3s; }
     .hero p { color: var(--text-muted); font-size: 18px; max-width: 600px; margin: 0 auto; }
     
-    .tools-container { max-width: 1000px; margin: 0 auto 60px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; min-height: 300px; }
+    /* Mobile-Only Search Bar (Hidden by default) */
+    .mobile-search-container { display: none; margin-top: 25px; } 
+    .mobile-search-input {
+      width: 100%; max-width: 300px; padding: 12px 20px; border-radius: 50px;
+      border: 1px solid var(--border); background: var(--input-bg); color: var(--text);
+      outline: none; font-size: 16px;
+    }
+    .mobile-search-input:focus { border-color: var(--accent); }
+
+    /* --- TOOLS GRID (Responsive) --- */
+    .tools-container { 
+      max-width: 1000px; margin: 0 auto 60px; padding: 0 20px; 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+      gap: 20px; min-height: 300px; 
+    }
     
     .tool-card { 
       background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 30px; 
@@ -56,111 +72,59 @@
       display: flex; flex-direction: column; align-items: flex-start; 
     }
     .tool-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-    .tool-card.hidden { display: none; } /* Used for search filtering */
+    .tool-card.hidden { display: none; } 
 
     .icon-box { width: 50px; height: 50px; background: rgba(106, 92, 255, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--accent); }
     .tool-card h3 { margin: 0 0 10px 0; font-size: 22px; }
     .tool-card p { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
 
-    /* No Results Message */
-    .no-results {
-      grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted); display: none;
-    }
+    .no-results { grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted); display: none; }
 
     /* --- NAVBAR CSS --- */
-    .navbar {
-      width: 100%; height: 70px; background: var(--nav-bg);
-      backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 1000; display: flex; align-items: center;
-    }
-    .nav-container {
-      width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
+    .navbar { width: 100%; height: 70px; background: var(--nav-bg); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; }
+    .nav-container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Brand */
     .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
     .brand-logo { height: 40px; width: 40px; border-radius: 8px; object-fit: cover; }
     .brand-text { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
 
-    /* Desktop Menu & Search */
     .nav-menu { display: flex; align-items: center; gap: 20px; }
     .nav-link { color: var(--text-muted); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s; }
     .nav-link:hover { color: var(--text); }
 
-    /* Search Bar Styles */
     .search-wrapper { position: relative; }
-    .search-input {
-      background: var(--input-bg); border: 1px solid var(--border); color: var(--text);
-      padding: 8px 15px 8px 35px; border-radius: 20px; outline: none; font-size: 14px;
-      width: 180px; transition: width 0.3s, border-color 0.2s;
-    }
+    .search-input { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 15px 8px 35px; border-radius: 20px; outline: none; font-size: 14px; width: 180px; transition: width 0.3s, border-color 0.2s; }
     .search-input:focus { width: 220px; border-color: var(--accent); }
-    .search-icon {
-      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-      width: 16px; height: 16px; color: var(--text-muted); pointer-events: none;
-    }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); pointer-events: none; }
 
-    /* Theme Toggle Button */
-    .theme-btn {
-      background: none; border: none; cursor: pointer; color: var(--text-muted);
-      padding: 8px; border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center;
-      min-width: auto;
-    }
+    .theme-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 8px; border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center; min-width: auto; }
     .theme-btn:hover { background: var(--border); color: var(--text); }
     .theme-btn svg { width: 22px; height: 22px; }
 
-    /* Profile Dropdown */
     .profile-dropdown { position: relative; }
     .profile-btn { background: none; border: none; cursor: pointer; padding: 0; min-width: auto; }
-    .avatar-circle {
-      width: 38px; height: 38px; background: linear-gradient(135deg, #333, #444);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      color: #fff; border: 2px solid var(--border); transition: border-color 0.2s;
-    }
+    .avatar-circle { width: 38px; height: 38px; background: linear-gradient(135deg, #333, #444); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; border: 2px solid var(--border); transition: border-color 0.2s; }
     .avatar-circle:hover { border-color: var(--accent); }
     .avatar-circle svg { width: 20px; height: 20px; }
 
-    /* Dropdown Content */
-    .dropdown-content {
-      display: none; position: absolute; right: 0; top: 50px;
-      background: var(--card); min-width: 220px; border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid var(--border);
-      overflow: hidden; flex-direction: column;
-    }
+    .dropdown-content { display: none; position: absolute; right: 0; top: 50px; background: var(--card); min-width: 220px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid var(--border); overflow: hidden; flex-direction: column; }
     .dropdown-content.show { display: flex; animation: slideDown 0.2s ease-out; }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
     .dropdown-header { padding: 15px 20px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
     .dropdown-header p { margin: 0; font-weight: 600; color: var(--text); }
     .dropdown-header span { font-size: 12px; color: var(--text-muted); }
-
-    .dropdown-content a {
-      padding: 12px 20px; color: var(--text-muted); text-decoration: none;
-      font-size: 14px; display: flex; align-items: center; gap: 10px; transition: background 0.2s;
-    }
+    .dropdown-content a { padding: 12px 20px; color: var(--text-muted); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
     .dropdown-content a:hover { background: rgba(255,255,255,0.05); color: var(--text); }
     .dropdown-content svg { width: 16px; height: 16px; opacity: 0.7; }
     .dropdown-divider { height: 1px; background: var(--border); margin: 5px 0; }
 
-    /* Mobile Hamburger */
     .hamburger { display: none; background: none; border: none; color: var(--text); cursor: pointer; min-width: auto; }
     .hamburger svg { width: 28px; height: 28px; }
 
-    /* Mobile Menu Overlay */
-    .mobile-menu-overlay {
-      display: none; position: fixed; top: 70px; left: 0; width: 100%;
-      background: var(--bg); border-bottom: 1px solid var(--border); padding: 20px;
-      flex-direction: column; gap: 15px; z-index: 999;
-    }
+    .mobile-menu-overlay { display: none; position: fixed; top: 70px; left: 0; width: 100%; background: var(--bg); border-bottom: 1px solid var(--border); padding: 20px; flex-direction: column; gap: 15px; z-index: 999; }
     .mobile-menu-overlay.active { display: flex; }
     .mobile-links a { color: var(--text); text-decoration: none; font-size: 18px; padding: 10px 0; display: block; }
 
-    @media (max-width: 768px) {
-      .nav-menu { display: none; }
-      .hamburger { display: block; }
-    }
-    
     /* Footer */
     .site-footer { width: 100%; background: #050505; border-top: 1px solid var(--border); padding: 60px 20px 40px; margin-top: auto; font-size: 14px; color: var(--text-muted); box-sizing: border-box; }
     .footer-content { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
@@ -176,7 +140,33 @@
     .social-links { display: flex; gap: 15px; margin-top: 10px; }
     .social-icon { width: 24px; height: 24px; fill: var(--text-muted); transition: fill 0.2s; }
     .social-icon:hover { fill: #fff; }
-    @media (max-width: 768px) { .footer-content { grid-template-columns: 1fr; text-align: center; } .newsletter-form { margin: 15px auto; } .social-links { justify-content: center; } }
+    
+    /* --- MEDIA QUERIES (The Dynamic Part) --- */
+    @media (max-width: 768px) {
+      /* Navbar */
+      .nav-menu { display: none; }
+      .hamburger { display: block; }
+      
+      /* Hero Adjustments */
+      .hero { padding: 40px 20px 30px; }
+      .hero h1 { font-size: 36px; }
+      .hero p { font-size: 16px; }
+      
+      /* Show Mobile Search */
+      .mobile-search-container { display: block; }
+      
+      /* Grid Adjustments */
+      .tools-container { 
+        grid-template-columns: 1fr; /* Full width on mobile */
+        gap: 15px;
+      }
+      .tool-card { padding: 25px; }
+
+      /* Footer */
+      .footer-content { grid-template-columns: 1fr; text-align: center; } 
+      .newsletter-form { margin: 15px auto; } 
+      .social-links { justify-content: center; }
+    }
   </style>
 </head>
 <body>
@@ -193,7 +183,7 @@
         
         <div class="search-wrapper">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="searchInput" class="search-input" placeholder="Search tools..." onkeyup="filterTools()">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search tools..." onkeyup="filterTools(this)">
         </div>
         
         <button class="theme-btn" onclick="toggleTheme()" title="Switch Theme">
@@ -213,17 +203,8 @@
               <p>Guest User</p>
               <span>Not logged in</span>
             </div>
-            
-            <a href="pages/settings.html">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> 
-              Settings
-            </a>
-
-            <a href="pages/profile.html">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> 
-              Profile
-            </a>
-
+            <a href="pages/settings.html">Settings</a>
+            <a href="pages/profile.html">Profile</a>
             <div class="dropdown-divider"></div>
             <a href="pages/login.html" style="color:#ff6b6b;">Log In / Sign Up</a>
           </div>
@@ -242,15 +223,19 @@
       <a href="pages/contact.html">Contact Us</a>
       <a href="pages/faq.html">FAQ</a>
       <hr style="border:0; border-top:1px solid #333; margin:10px 0;">
-      <a href="#">My Profile</a>
-      <a href="#">Settings</a>
-      <a href="#" style="color:var(--accent)">Log In</a>
+      <a href="pages/profile.html">My Profile</a>
+      <a href="pages/settings.html">Settings</a>
+      <a href="pages/login.html" id="mobileLoginBtn" style="color:var(--accent)">Log In</a>
     </div>
   </div>
 
   <div class="hero">
     <h1>Useful Tools</h1>
     <p>Free, privacy-friendly tools for creators and developers.</p>
+    
+    <div class="mobile-search-container">
+      <input type="text" class="mobile-search-input" placeholder="🔍 Search tools..." onkeyup="filterTools(this)">
+    </div>
   </div>
 
   <div class="tools-container" id="toolsList">
@@ -291,44 +276,99 @@
     <a href="tools/UMconverter.html" class="tool-card"><div class="icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 23l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></div><h3>Universal Media Converter</h3><p>Convert any media to MP3, MP4, GIF, or WAV.</p></a>
 
     <a href="tools/pdf-merger.html" class="tool-card">
-        <div class="tool-icon" style="background: linear-gradient(135deg, #6a5cff, #8f7eff);">
-          <svg viewBox="0 0 24 24" fill="white" width="40" height="40">
-            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-          </svg>
+        <div class="icon-box" style="background: linear-gradient(135deg, #6a5cff, #8f7eff); color: white;">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
         </div>
-        <div class="tool-info">
-          <h3>PDF Merger</h3>
-          <p>Combine multiple PDFs into one.</p>
+        <h3>PDF Merger</h3>
+        <p>Combine multiple PDFs into one.</p>
+    </a>
+
+    <a href="tools/colorpicker.html" class="tool-card">
+        <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
         </div>
-      </a>
+        <h3>Color Picker</h3>
+        <p>Extract exact colors (Hex/RGB) from any image.</p>
+    </a>
+
+    <a href="tools/bg-remover.html" class="tool-card">
+        <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"></path>
+            </svg>
+        </div>
+        <h3>BG Remover</h3>
+        <p>Remove image backgrounds automatically with AI.</p>
+    </a>
+
+    <a href="tools/pdf-splitter.html" class="tool-card">
+        <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5z"></path>
+            </svg>
+        </div>
+        <h3>PDF Splitter</h3>
+        <p>Extract pages, ranges, or separate all pages.</p>
+    </a>
+
+    <a href="tools/audio-cutter.html" class="tool-card">
+        <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3v9.28a4.39 4.39 0 0 0-1.5-.28 4.5 4.5 0 1 0 4.5 4.5V6h4V3h-7z"></path>
+                <path d="M3 3l18 18"></path> </svg>
+        </div>
+        <h3>Audio Cutter</h3>
+        <p>Trim MP3/WAV files visually in your browser.</p>
+    </a>
+
+    <a href="tools/password-strength.html" class="tool-card">
+        <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+        </div>
+        <h3>Pass Analyzer</h3>
+        <p>Check password strength and crack time.</p>
+    </a>
+
+    <a href="tools/image-compressor.html" class="tool-card">
+        <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z"></path>
+            </svg>
+        </div>
+        <h3>Image Compressor</h3>
+        <p>Reduce file size smartly with AI.</p>
+    </a>
 
     <div class="no-results" id="noResults">No tools found matching your search.</div>
   </div>
 
-  <footer class="site-footer">
+ <footer class="site-footer">
     <div class="footer-content">
       <div class="footer-brand">
         <h2>MyTools</h2>
         <p>The ultimate utility hub. Built for efficiency.</p>
         <div class="newsletter-form">
           <input type="email" placeholder="Enter your e-mail" />
-          <button class="newsletter-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <button class="newsletter-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
         </div>
       </div>
       <div class="footer-col">
         <h4>Product</h4>
         <ul>
-          <li><a href="tools/looper.html">Video Looper</a></li>
-          <li><a href="tools/resizer.html">Image Resizer</a></li>
+          <li><a href="looper.html">Video Looper</a></li>
+          <li><a href="resizer.html">Image Resizer</a></li>
           <li><a href="#">Roadmap</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Support</h4>
         <ul>
-          <li><a href="pages/faq.html">FAQ</a></li>
-          <li><a href="pages/contact.html">Contact Us</a></li>
-          <li><a href="pages/privacy.html">Privacy Policy</a></li>
+          <li><a href="../pages/faq.html">FAQ</a></li>
+          <li><a href="../pages/contact.html">Contact Us</a></li>
+          <li><a href="../pages/privacy.html">Privacy Policy</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -341,13 +381,15 @@
         </div>
       </div>
     </div>
-    <div style="text-align:center; margin-top:50px; opacity:0.5; font-size:12px;">&copy; 2025 MyTools. Designed with Code.</div>
+    <div style="text-align:center; margin-top:50px; opacity:0.5; font-size:12px;">&copy; 2025 MyTools.</div>
   </footer>
 
   <script>
     // --- SEARCH FUNCTIONALITY ---
-    function filterTools() {
-      const input = document.getElementById('searchInput');
+    // Updated to accept input from either box (desktop or mobile)
+    window.filterTools = function(inputElement) {
+      // If triggered by typing, use that input. Otherwise fallback to ID.
+      const input = inputElement || document.getElementById('searchInput'); 
       const filter = input.value.toLowerCase();
       const cards = document.getElementsByClassName('tool-card');
       const noResults = document.getElementById('noResults');
@@ -370,50 +412,52 @@
 
       // Show/Hide "No Results" message
       if (visibleCount === 0) {
-        noResults.style.display = 'block';
+        if(noResults) noResults.style.display = 'block';
       } else {
-        noResults.style.display = 'none';
+        if(noResults) noResults.style.display = 'none';
       }
     }
   </script>
 
   <script type="module">
-    import { auth, db, doc, getDoc, signOut, onAuthStateChanged } from "./firebase-config.js"; // Ensure path is correct
+    import { auth, db, doc, getDoc, signOut, onAuthStateChanged } from "./firebase-config.js";
 
     // --- AUTH LOGIC ---
     onAuthStateChanged(auth, async (user) => {
       const profileMenu = document.getElementById('profileMenu');
       const headerText = profileMenu.querySelector('.dropdown-header p');
       const subText = profileMenu.querySelector('.dropdown-header span');
-      const loginLink = profileMenu.querySelector('a[style*="color:#ff6b6b"]'); // The login/logout button
+      const loginLink = profileMenu.querySelector('a[style*="color:#ff6b6b"]');
+      
+      // Select the Mobile Login Button too!
+      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
 
       if (user) {
-        // 1. Initial State (while loading DB)
+        // --- DESKTOP LOGIC ---
         headerText.innerText = user.displayName || user.email.split('@')[0]; 
         subText.innerText = "Member";
-
-        // 2. Fetch Real Name from Database
         try {
           const docRef = doc(db, "users", user.uid);
           const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            // Found the real name in the database!
-            headerText.innerText = docSnap.data().name; 
-          }
-        } catch (e) {
-          console.log("Could not fetch profile name");
-        }
+          if (docSnap.exists()) { headerText.innerText = docSnap.data().name; }
+        } catch (e) { console.log("Could not fetch profile name"); }
         
-        // 3. Update Logout Button
         if(loginLink) {
           loginLink.innerText = "Log Out";
           loginLink.href = "#";
           loginLink.style.color = "#ccc";
-          loginLink.onclick = async (e) => {
-            e.preventDefault();
-            await signOut(auth);
-            window.location.reload();
-          };
+          loginLink.onclick = async (e) => { e.preventDefault(); await signOut(auth); window.location.reload(); };
+        }
+
+        // --- MOBILE LOGIC ---
+        if(mobileLoginBtn) {
+            mobileLoginBtn.innerText = "Log Out";
+            mobileLoginBtn.href = "#";
+            mobileLoginBtn.onclick = async (e) => {
+                e.preventDefault();
+                await signOut(auth);
+                window.location.reload();
+            };
         }
 
       } else {
@@ -426,38 +470,18 @@
           loginLink.style.color = "#ff6b6b";
           loginLink.onclick = null;
         }
+
+        // --- MOBILE GUEST LOGIC ---
+        if(mobileLoginBtn) {
+            mobileLoginBtn.innerText = "Log In";
+            mobileLoginBtn.href = "pages/login.html";
+            mobileLoginBtn.onclick = null;
+        }
       }
     });
 
-    // --- SEARCH & UI LOGIC (Keep existing) ---
-    window.filterTools = function() {
-      const input = document.getElementById('searchInput');
-      const filter = input.value.toLowerCase();
-      const cards = document.getElementsByClassName('tool-card');
-      const noResults = document.getElementById('noResults');
-      let visibleCount = 0;
-
-      for (let i = 0; i < cards.length; i++) {
-        const title = cards[i].getElementsByTagName('h3')[0];
-        const desc = cards[i].getElementsByTagName('p')[0];
-        if (title || desc) {
-          const txtValue = (title.textContent + " " + desc.textContent).toLowerCase();
-          if (txtValue.indexOf(filter) > -1) {
-            cards[i].classList.remove('hidden');
-            visibleCount++;
-          } else {
-            cards[i].classList.add('hidden');
-          }
-        }
-      }
-      if(noResults) noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-    }
-
     // Theme Toggle
-    if (localStorage.getItem('theme') === 'light') {
-      document.body.classList.add('light-mode');
-      updateIcons(true);
-    }
+    if (localStorage.getItem('theme') === 'light') { document.body.classList.add('light-mode'); updateIcons(true); }
 
     window.toggleTheme = function() {
       const isLight = document.body.classList.toggle('light-mode');
@@ -474,15 +498,8 @@
       }
     }
 
-    window.toggleProfile = function() { 
-      const menu = document.getElementById('profileMenu');
-      if(menu) menu.classList.toggle('show'); 
-    }
-    
-    window.toggleMobileMenu = function() { 
-      const menu = document.getElementById('mobileOverlay');
-      if(menu) menu.classList.toggle('active'); 
-    }
+    window.toggleProfile = function() { document.getElementById('profileMenu').classList.toggle('show'); }
+    window.toggleMobileMenu = function() { document.getElementById('mobileOverlay').classList.toggle('active'); }
     
     window.onclick = function(event) {
       if (!event.target.closest('.profile-btn') && !event.target.closest('.dropdown-content')) {

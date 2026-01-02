@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico..jpg" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Compressor - Reduce JPG, PNG, WEBP Size Online Free</title>
+  <meta name="description" content="Compress images online instantly without losing quality. Reduce file size by up to 90% for websites and email. 100% private, client-side processing." />
+  
+  <link rel="stylesheet" href="../css/tools-shared.css">
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+
+  <style>
+    /* Tool Specific Styling */
+    .settings-panel {
+        background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+        border-radius: 12px; padding: 25px; margin: 25px 0; text-align: left;
+        display: none;
+    }
+
+    .slider-container { margin-bottom: 20px; }
+    .slider-label { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: var(--text-muted); font-weight: 500; }
+    
+    /* Custom Range Slider */
+    input[type=range] {
+        width: 100%; -webkit-appearance: none; background: transparent;
+    }
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+        background: var(--accent); cursor: pointer; margin-top: -8px;
+        box-shadow: 0 0 15px var(--accent); border: 2px solid #fff;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.1); border-radius: 2px;
+    }
+
+    /* THE NEW BUTTON STYLE */
+    .settings-btn {
+        background: linear-gradient(135deg, var(--accent), #8f7eff);
+        color: white; border: none; padding: 14px 28px; border-radius: 10px;
+        font-size: 15px; font-weight: 600; cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(106, 92, 255, 0.3);
+        display: inline-flex; align-items: center; gap: 8px;
+        margin-top: 10px;
+    }
+    .settings-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106, 92, 255, 0.5);
+    }
+    .settings-btn:active { transform: scale(0.98); }
+
+    /* Comparison Area */
+    .compare-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;
+        display: none;
+    }
+    .stat-box {
+        background: var(--input-bg); border: 1px solid var(--border); padding: 20px; border-radius: 12px;
+        text-align: center;
+    }
+    .stat-box h4 { margin: 0 0 8px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .stat-box .size-text { font-size: 22px; font-weight: 700; color: #fff; font-family: monospace; }
+    
+    .stat-box.success { border-color: #2ecc71; background: rgba(46, 204, 113, 0.08); }
+    .stat-box.success .size-text { color: #2ecc71; text-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
+
+    .savings-badge {
+        grid-column: 1 / -1; text-align: center; font-size: 14px; color: var(--accent);
+        margin-top: 15px; font-weight: 500;
+    }
+
+    .upload-area {
+        border: 2px dashed var(--border); background: rgba(255,255,255,0.02); border-radius: 16px;
+        padding: 50px 20px; text-align: center; cursor: pointer; transition: 0.3s;
+    }
+    .upload-area:hover { border-color: var(--accent); background: rgba(106, 92, 255, 0.05); }
+
+    /* Download Action Button */
+    .action-btn {
+        width: 100%; padding: 18px; border-radius: 12px; border: 2px solid var(--accent);
+        background: transparent; color: var(--accent); font-size: 18px; font-weight: 600; cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        margin-top: 25px; display: none;
+    }
+    .action-btn:hover { background: var(--accent); color: white; box-shadow: 0 0 20px rgba(106, 92, 255, 0.4); }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">
+        <img src="../logo1.png" alt="MyTools" class="brand-logo">
+        <span class="brand-text">MyTools</span>
+      </a>
+
+      <div class="nav-menu" id="navMenu">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../pages/contact.html" class="nav-link">Contact</a>
+        <button class="theme-btn" onclick="toggleTheme()" title="Switch Theme">
+          <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <div class="profile-dropdown">
+          <button class="profile-btn" onclick="toggleProfile()">
+            <div class="avatar-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+          </button>
+          <div class="dropdown-content" id="profileMenu">
+            <div class="dropdown-header"><p>Guest User</p><span>Not logged in</span></div>
+            <a href="../pages/settings.html">Settings</a><a href="../pages/profile.html">Profile</a><div class="dropdown-divider"></div><a href="../pages/login.html" style="color:#ff6b6b;">Log In / Sign Up</a>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu-overlay" id="mobileOverlay">
+    <div class="mobile-links">
+      <a href="../index.html">Home</a><a href="../pages/contact.html">Contact Us</a><a href="../pages/faq.html">FAQ</a><hr style="border:0; border-top:1px solid #333; margin:10px 0;"><a href="../pages/profile.html">My Profile</a><a href="../pages/settings.html">Settings</a><a href="../pages/login.html" style="color:var(--accent)">Log In</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <a href="../index.html" class="back-link">&larr; Back to Tools</a>
+    <div style="clear:both;"></div>
+    
+    <h1>Image Compressor</h1>
+    <p style="color:var(--text-muted); margin-bottom: 25px;">Reduce image size instantly without losing visible quality.</p>
+
+    <div class="upload-area" id="uploadBox" onclick="document.getElementById('fileInput').click()">
+        <svg style="width:48px; height:48px; fill:var(--accent); margin-bottom:15px; opacity:0.9;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z"/></svg>
+        <p style="margin:0; font-weight:500;">Click to upload Image</p>
+        <p style="margin:5px 0 0; font-size:12px; color:var(--text-muted);">JPG, PNG, WEBP (Max 20MB)</p>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+    <div class="settings-panel" id="settingsPanel">
+        <h3 style="margin-top:0; font-size:16px; margin-bottom:20px;">Compression Settings</h3>
+        
+        <div class="slider-container">
+            <div class="slider-label"><span>Quality</span> <span id="qualityVal" style="color:var(--accent)">75%</span></div>
+            <input type="range" id="qualityRange" min="0.1" max="1.0" step="0.05" value="0.75">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label"><span>Max Width</span> <span id="maxWidthVal" style="color:var(--accent)">1920px</span></div>
+            <input type="range" id="maxWidthRange" min="500" max="4000" step="100" value="1920">
+        </div>
+        
+        <button onclick="processImage()" class="settings-btn">
+            Apply & Compress 
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+    </div>
+
+    <div class="compare-grid" id="compareGrid">
+        <div class="stat-box">
+            <h4>Original</h4>
+            <div class="size-text" id="originalSize">0 KB</div>
+        </div>
+        <div class="stat-box success">
+            <h4>Compressed</h4>
+            <div class="size-text" id="compressedSize">0 KB</div>
+        </div>
+        <div class="savings-badge" id="savingsText">Saved 0%</div>
+    </div>
+
+    <button id="downloadBtn" class="action-btn">Download Compressed Image</button>
+    <div class="loader" id="loader"></div>
+  </div>
+
+<div class="seo-content">
+    <h2>The Best Free Online Image Compressor</h2>
+    <p>
+      Is your website loading slowly? Do you need to email a photo but the file is too large? The <strong>MyTools Image Compressor</strong> solves this instantly. We use smart compression algorithms to significantly reduce the file size of your JPG, PNG, and WEBP images while keeping the visual quality perfectly clear.
+    </p>
+
+    <h3>Why use our Photo Optimizer?</h3>
+    <div class="seo-grid">
+      <div>
+        <h4>Smart Compression</h4>
+        <p>We balance file size and image quality. You can reduce a 5MB photo to under 500KB without noticing any blur or artifacts.</p>
+      </div>
+      <div>
+        <h4>100% Private (No Uploads)</h4>
+        <p>Unlike other sites, we don't upload your photos to a server. All compression happens <strong>locally in your browser</strong>. Your personal photos stay on your device.</p>
+      </div>
+      <div>
+        <h4>Supports All Formats</h4>
+        <p>Whether you have a standard JPEG from a camera, a PNG screenshot, or a modern WEBP file, our tool handles them all efficiently.</p>
+      </div>
+      <div>
+        <h4>Custom Control</h4>
+        <p>Use our slider to choose your exact compression level. You decide if you want maximum savings or maximum quality.</p>
+      </div>
+    </div>
+
+    <h3>How to Compress Images Online?</h3>
+    <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+      <li><strong>Upload:</strong> Click the box to select your image (JPG, PNG, or WEBP).</li>
+      <li><strong>Adjust:</strong> Use the "Quality" slider to choose how much you want to compress.</li>
+      <li><strong>Resize (Optional):</strong> If the image is too wide (e.g., 4000px), use the Width slider to shrink dimensions for even smaller file sizes.</li>
+      <li><strong>Download:</strong> Click "Apply & Compress" to see the savings, then download your optimized image.</li>
+    </ol>
+
+    <h3>Frequently Asked Questions (FAQ)</h3>
+    <div style="margin-top: 20px;">
+      <h4 style="margin-bottom:5px; color:var(--text);">Does this ruin image quality?</h4>
+      <p style="margin-bottom:15px;">No. We use "Lossy" compression which removes data the human eye can't see. Your image will look virtually identical to the original, just much smaller.</p>
+      
+      <h4 style="margin-bottom:5px; color:var(--text);">Why is client-side better?</h4>
+      <p style="margin-bottom:15px;">It's faster because you don't have to wait for uploads/downloads, and it's safer because your data never touches a cloud server.</p>
+      
+      <h4 style="margin-bottom:5px; color:var(--text);">What is the best setting for websites?</h4>
+      <p>For websites, we recommend a Quality of <strong>75%</strong> and a Max Width of <strong>1920px</strong>. This usually results in crisp images under 200KB.</p>
+    </div>
+  </div>
+
+  <div class="rating-section">
+    <div class="rating-label">Rate this tool</div>
+    <div class="stars" id="starContainer">
+      <svg class="star filled" onclick="rate(1)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(2)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(3)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(4)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+      <svg class="star filled" onclick="rate(5)" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+    </div>
+    <div class="rating-count" id="ratingText">4.7 / 5 (<span id="voteCount">853</span> votes)</div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h2>MyTools</h2>
+        <p>The ultimate utility hub. Built for efficiency.</p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Enter your e-mail" />
+          <button class="newsletter-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="tools/looper.html">Video Looper</a></li>
+          <li><a href="tools/resizer.html">Image Resizer</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="pages/faq.html">FAQ</a></li>
+          <li><a href="pages/contact.html">Contact Us</a></li>
+          <li><a href="pages/privacy.html">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow us</h4>
+        <div class="social-links">
+          <a href="https://instagram.com/_parthh.02" target="_blank" aria-label="Instagram"><svg class="social-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          <a href="https://discord.gg/azZZTwVk" target="_blank" aria-label="Discord"><svg class="social-icon" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037 14.16 14.16 0 0 0-.622 1.275 18.256 18.256 0 0 0-5.46 0 14.195 14.195 0 0 0-.622-1.275.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.679 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z"/></svg></a>
+          <a href="https://twitter.com" target="_blank" aria-label="Twitter"><svg class="social-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="https://github.com/parthjadhav85" target="_blank" aria-label="GitHub"><svg class="social-icon" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:50px; opacity:0.5; font-size:12px;">&copy; 2025 MyTools.</div>
+  </footer>
+
+  <script>
+    function toggleProfile(){document.getElementById('profileMenu').classList.toggle('show');}
+    function toggleMobileMenu(){document.getElementById('mobileOverlay').classList.toggle('active');}
+    if(localStorage.getItem('theme')==='light'){document.body.classList.add('light-mode');document.getElementById('sunIcon').style.display='none';document.getElementById('moonIcon').style.display='block';}
+    function toggleTheme(){const isLight=document.body.classList.toggle('light-mode');localStorage.setItem('theme',isLight?'light':'dark');document.getElementById('sunIcon').style.display=isLight?'none':'block';document.getElementById('moonIcon').style.display=isLight?'block':'none';}
+    window.onclick=function(e){if(!e.target.closest('.profile-btn')&&!e.target.closest('.dropdown-content')){document.getElementById('profileMenu').classList.remove('show');}}
+
+    // Sliders
+    document.getElementById('qualityRange').oninput = function() {
+        document.getElementById('qualityVal').innerText = Math.round(this.value * 100) + '%';
+    }
+    document.getElementById('maxWidthRange').oninput = function() {
+        document.getElementById('maxWidthVal').innerText = this.value + 'px';
+    }
+  </script>
+
+  <script type="module">
+    import { auth, db, doc, getDoc, signOut, onAuthStateChanged, logActivity } from "../firebase-config.js";
+
+    // Auth Logic
+    onAuthStateChanged(auth, async (user) => {
+      const profileMenu = document.getElementById('profileMenu');
+      const headerText = profileMenu.querySelector('.dropdown-header p');
+      if (user) {
+        headerText.innerText = user.displayName || user.email.split('@')[0];
+        try { const docSnap = await getDoc(doc(db, "users", user.uid)); if(docSnap.exists()) headerText.innerText = docSnap.data().name; } catch(e){}
+        const link = document.querySelector('.dropdown-content a[href*="login"]');
+        if(link) { link.innerText="Log Out"; link.href="#"; link.onclick=async(e)=>{e.preventDefault();await signOut(auth);window.location.reload();}; }
+      }
+    });
+
+    // COMPRESSION LOGIC
+    let currentFile = null;
+    let compressedBlob = null;
+    const fileInput = document.getElementById('fileInput');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const compareGrid = document.getElementById('compareGrid');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const loader = document.getElementById('loader');
+
+    fileInput.addEventListener('change', (e) => {
+        if(e.target.files.length === 0) return;
+        currentFile = e.target.files[0];
+
+        // Reset UI
+        document.getElementById('uploadBox').style.display = 'none';
+        settingsPanel.style.display = 'block';
+        compareGrid.style.display = 'none';
+        downloadBtn.style.display = 'none';
+
+        // Show Original Size
+        document.getElementById('originalSize').innerText = formatBytes(currentFile.size);
+        
+        // Auto-process first time
+        processImage();
+    });
+
+    // Make function globally accessible
+    window.processImage = async function() {
+        if(!currentFile) return;
+
+        loader.style.display = 'block';
+        compareGrid.style.display = 'none';
+        downloadBtn.style.display = 'none';
+
+        const quality = parseFloat(document.getElementById('qualityRange').value);
+        const maxWidth = parseInt(document.getElementById('maxWidthRange').value);
+
+        const options = {
+            maxSizeMB: 1, // This library uses this as a rough target, but quality is primary
+            maxWidthOrHeight: maxWidth,
+            useWebWorker: true,
+            initialQuality: quality
+        };
+
+        try {
+            compressedBlob = await imageCompression(currentFile, options);
+            
+            // Show Results
+            loader.style.display = 'none';
+            compareGrid.style.display = 'grid';
+            downloadBtn.style.display = 'block';
+            
+            document.getElementById('compressedSize').innerText = formatBytes(compressedBlob.size);
+            
+            // Calculate Savings
+            const savings = ((currentFile.size - compressedBlob.size) / currentFile.size) * 100;
+            const savingsText = document.getElementById('savingsText');
+            
+            if (savings > 0) {
+                savingsText.innerText = `Reduced by ${savings.toFixed(1)}% 🚀`;
+                savingsText.style.color = 'var(--accent)';
+            } else {
+                savingsText.innerText = `File size increased (Try lowering quality)`;
+                savingsText.style.color = '#ff6b6b';
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Error compressing image.");
+            loader.style.display = 'none';
+        }
+    };
+
+    downloadBtn.onclick = () => {
+        if(!compressedBlob) return;
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(compressedBlob);
+        link.download = "compressed-" + currentFile.name;
+        link.click();
+        
+        if(auth.currentUser) logActivity(auth.currentUser, "Image Compressor", `Saved ${(compressedBlob.size/1024).toFixed(0)}KB`);
+    };
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+  </script>
+</body>
+</html>
