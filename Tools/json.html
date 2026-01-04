@@ -451,7 +451,7 @@
       });
 
       try {
-        const res = await fetch('/api/rate', {
+        const res = await fetch('https://mytools-node.onrender.com/api/rate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ toolName: toolName, stars: stars })
@@ -479,7 +479,7 @@
     checkLogin();
     async function checkLogin() {
       try {
-        const res = await fetch('/api/me');
+        const res = await fetch('https://mytools-node.onrender.com/api/me');
         const data = await res.json();
         const profileMenu = document.getElementById('profileMenu');
         const headerText = profileMenu.querySelector('.dropdown-header p');
@@ -505,7 +505,7 @@
     }
 
     async function logout() {
-      await fetch('/api/logout', { method: 'POST' });
+      await fetch('https://mytools-node.onrender.com/api/logout', { method: 'POST' });
       window.location.reload(); 
     }
 

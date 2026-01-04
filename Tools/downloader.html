@@ -197,7 +197,7 @@
         document.getElementById('loader').style.display = 'block';
 
         try {
-            const res = await fetch('http://localhost:5000/get-video-info', {
+            const res = await fetch('https://mytools-python.onrender.com/get-video-info', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: url })
@@ -227,7 +227,7 @@
         status.style.color = "#6a5cff";
 
         try {
-            const response = await fetch('http://localhost:5000/download-video', {
+            const response = await fetch('https://mytools-python.onrender.com/download-video', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: url, quality: quality, mode: mode })

@@ -531,13 +531,13 @@
 
     async function checkLogin() {
       try {
-        const res = await fetch('/api/me');
+        const res = await fetch('https://mytools-node.onrender.com/api/me');
         const data = await res.json();
         if (data.loggedIn) {
           document.querySelector('.dropdown-header p').innerText = data.name;
           document.querySelector('.dropdown-header span').innerText = "Member";
           const link = document.querySelector('a[href$="login.html"]');
-          link.innerText = "Log Out"; link.href = "#"; link.onclick = async () => { await fetch('/api/logout', { method: 'POST' }); location.reload(); };
+          link.innerText = "Log Out"; link.href = "#"; link.onclick = async () => { await fetch('https://mytools-node.onrender.com/api/logout', { method: 'POST' }); location.reload(); };
         }
       } catch (e) {}
     }

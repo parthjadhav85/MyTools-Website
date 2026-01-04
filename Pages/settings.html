@@ -63,7 +63,7 @@
 
     async function deleteAccount() {
       if(confirm("Are you sure? This cannot be undone.")) {
-        const res = await fetch('/api/user/delete', { method: 'POST' });
+        const res = await fetch('https://mytools-node.onrender.com/api/user/delete', { method: 'POST' });
         const data = await res.json();
         if(data.success) {
           alert("Account deleted.");
