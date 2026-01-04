@@ -26,21 +26,32 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// Add this to the bottom of firebase-config.js
+// --- 2. YOUR LOGGING FUNCTION ---
 export async function logActivity(user, toolName, action) {
   if (!user) return;
   try {
     const userRef = doc(db, "users", user.uid);
-    await updateDoc(userRef, {
+    // updateDoc will fail if the user doc doesn't exist, so we use setDoc with merge just in case
+    await setDoc(userRef, {
       history: arrayUnion({
         tool: toolName,
         action: action,
         timestamp: new Date().toISOString()
       })
-    });
+    }, { merge: true });
+    
+    console.log(`[Success] Logged: ${toolName} -> ${action}`);
   } catch (e) {
     console.error("Error logging activity:", e);
   }
 }
 
+// --- 3. THE "LAZY" GLOBAL WRAPPER (Paste this right after logActivity) ---
+window.recordToolUsage = (toolName, action) => {
+    if (auth.currentUser) {
+        logActivity(auth.currentUser, toolName, action);
+    }
+};
+
+// --- 4. EXPORTS ---
 export { auth, db, provider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, doc, setDoc, getDoc, updateDoc, arrayUnion };

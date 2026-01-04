@@ -488,6 +488,11 @@
             }
             if(auth.currentUser) logActivity(auth.currentUser, "PDF Splitter", "Success");
 
+            // LOG ACTIVITY (Lazy Method) - Paste this right before the catch block
+            if(window.recordToolUsage) {
+                window.recordToolUsage("PDF Splitter", "Split Processed");
+            }
+
         } catch (err) {
             console.error(err);
             statusMsg.style.display = 'block';

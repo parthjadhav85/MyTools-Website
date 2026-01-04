@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/x-icon" href="../favicon.ico.jpg" />
+  <link rel="icon" type="image/x-icon" href="../favicon.ico..jpg" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Audio Cutter - Trim MP3, WAV & Make Ringtones Online</title>
@@ -398,6 +398,11 @@
             const newChannelData = newBuffer.getChannelData(i);
             for (let j = 0; j < frameCount; j++) {
                 newChannelData[j] = channelData[startFrame + j];
+
+                // LOG ACTIVITY (Lazy Method)
+        if(window.recordToolUsage) {
+            window.recordToolUsage("Audio Cutter", "Trim Success");
+        }
             }
         }
 

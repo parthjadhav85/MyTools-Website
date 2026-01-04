@@ -376,12 +376,17 @@
 
     downloadBtn.onclick = () => {
         if(!compressedBlob) return;
+        
+        // 1. Trigger Download
         const link = document.createElement('a');
         link.href = URL.createObjectURL(compressedBlob);
         link.download = "compressed-" + currentFile.name;
         link.click();
         
-        if(auth.currentUser) logActivity(auth.currentUser, "Image Compressor", `Saved ${(compressedBlob.size/1024).toFixed(0)}KB`);
+        // 2. LOG ACTIVITY (Lazy Method)
+        if(window.recordToolUsage) {
+            window.recordToolUsage("Image Compressor", "Download Success");
+        }
     };
 
     function formatBytes(bytes) {

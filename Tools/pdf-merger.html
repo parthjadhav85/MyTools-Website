@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/x-icon" href="../favicon.ico.jpg" />
+  <link rel="icon" type="image/x-icon" href="../favicon.ico..jpg" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PDF Merger - MyTools</title>
@@ -194,7 +194,7 @@
   </footer>
 
   <script type="module">
-    import { auth, db, doc, getDoc, signOut, onAuthStateChanged } from "../firebase-config.js";
+    import { auth, db, doc, getDoc, signOut, onAuthStateChanged, logActivity } from "../firebase-config.js";
 
     // --- AUTH & UI LOGIC ---
     onAuthStateChanged(auth, async (user) => {
